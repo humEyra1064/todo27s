@@ -1,10 +1,11 @@
 const todoInput = document.getElementById('todo-input');
 const addBtn = document.getElementById('todo-button');
 const todoUl = document.getElementById("todo-ul");
-const todos = []
+const todos = JSON.parse(localStorage.getItem("TODOS")) ||[];
+
 //trim başta ortada ve sonda boşlukları kapatıp birleştiriyor.eğer trimlenmiş hali bomboşsa uyarı ver.👇
 addBtn.addEventListener("click",()=>{
-    if(todo-input.value.trim() === "" ){
+    if(todoInput.value.trim() === "" ){
         alert("Please,enter new todo text!")
 
     }
@@ -23,7 +24,7 @@ todoInput.value = ""
 
 function createListElement(newTodo){
     const{id,completed,text} = newTodo
-    
+
     const li = document.createElement("li")
     li.setAttribute("id",id);
     completed && li.classList.add("checked");
@@ -43,11 +44,14 @@ function createListElement(newTodo){
 
     todoUl.appendChild(li)
 }
+
 todoUl.addEventListener("click",(e)=>{
   const id = e.target.parentElement.getAttribute("id");
   if(e.target.classList.contains("fa-trash")){
     e.target.parentElement.remove();
-    todos.filter((todo)=>todo.id !== Number(id))
+   todos = todos.filter((todo)=>todo.id !== Number(id))
+    localStorage.setItem("TODOS",JSON.stringify(todos))
+
   }else if(e.target.classList.contains("fa-check")){
     e.target.parentElement.classList.toggle("checked");
     todos.map((todo,index)=>{
@@ -55,9 +59,19 @@ todoUl.addEventListener("click",(e)=>{
             todos[index].complated = !todos[index].complated;
 
         }
-    }
+    });
 
-    )
+    localStorage.setItem("TODOS",JSON.stringify(todos));
   }
 
+});
+
+todoInput.addEventListener("keydown",(e)=>{
+    if(e.code === "Enter"){
+        addBtn.click()
+    }
 })
+
+window.onload = function(){
+    todoInput.focus();
+}
